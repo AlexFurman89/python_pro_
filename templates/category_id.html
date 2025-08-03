@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Category</title>
+</head>
+<body>
+    <!-- PATCH form -->
+    <form action="/category/{{ category_id }}" method="post">
+        <input type="hidden" id="request_method" name="request_method" value="PATCH"><br>
+        <label for="category_name">Category name:</label><br>
+        <input type="text" id="category_name" name="category_name" value="{{ category_name }}"><br>
+        <input type="submit" value="Submit">
+    </form>
+
+    <!-- DELETE form -->
+    <form action="/category/{{ category_id }}" method="post">
+        <input type="hidden" id="request_method" name="request_method" value="DELETE"><br>
+        <input type="submit" value="DELETE CATEGORY">
+    </form>
+</body>
+</html>
