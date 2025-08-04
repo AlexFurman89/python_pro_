@@ -32,7 +32,7 @@ class Database:
 
 @app.route('/user', methods=['GET', 'DELETE'])
 def user_handler():
-    connector= sqlite3.connect("../financial_tracker.db")
+    connector= sqlite3.connect("financial_tracker.db")
     cursor=connector.cursor()
 
     if request.method == 'GET':
@@ -50,12 +50,12 @@ def user_login_handler():
     if request.method == 'GET':
         return render_template('login.html')
     else:
-        username=request.form['username']
+        email=request.form['email']
         password=request.form['password']
-        with Database('../financial_tracker.db') as cursor:
-            result = cursor.execute('SELECT * FROM user WHERE name=? AND password=?', (username, password))
+        with Database('financial_tracker.db') as cursor:
+            result = cursor.execute('SELECT * FROM user WHERE name=? AND password=?', (email, password))
             result=result.fetchone()
-        return f"HELLO POST {username}{password}"
+        return f"HELLO POST {email}{password}"
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -71,7 +71,7 @@ def user_register_handler():
 
             print(f"Attempting to register user: {username}")
 
-            with Database('../financial_tracker.db') as cursor:
+            with Database('financial_tracker.db') as cursor:
                 cursor.execute('INSERT INTO user (name, surname, email, password) VALUES (?, ?, ?, ?)',
                                (username, surname, email, password))
 
