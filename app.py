@@ -1,7 +1,9 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, session, redirect, url_for
 import sqlite3
 
+
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'
 
 class Database:
     def __init__(self, db_name):
@@ -29,7 +31,11 @@ class Database:
             print(f"Error closing database connection: {e}")
             raise
 
-
+@app.route('/')
+def index():
+    if 'user_id' in session:
+        return f"Logged in as {session['user_email']}"
+    return 'You are not logged in'
 @app.route('/user', methods=['GET', 'DELETE'])
 def user_handler():
     connector= sqlite3.connect("financial_tracker.db")
@@ -45,17 +51,25 @@ def user_handler():
 
         return "HELLO DELETE"
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def user_login_handler():
     if request.method == 'GET':
         return render_template('login.html')
     else:
-        email=request.form['email']
-        password=request.form['password']
+        email = request.form['email']
+        password = request.form['password']
         with Database('financial_tracker.db') as cursor:
-            result = cursor.execute('SELECT * FROM user WHERE name=? AND password=?', (email, password))
-            result=result.fetchone()
-        return f"HELLO POST {email}{password}"
+            cursor.execute('SELECT id, name, surname, email FROM user WHERE email=? AND password=?',
+                           (email, password))
+            result = cursor.fetchone()
+
+        if result:
+            session['user_id'] = result[0]
+            session['user_email'] = result[3]
+            return redirect(url_for('index'))
+        else:
+            return "Invalid credentials", 401
 
 
 @app.route('/register', methods=['GET', 'POST'])
