@@ -11,6 +11,8 @@ class User(Base):
     surname = Column(String(50), nullable=False)
     email = Column(String(120), unique=True, nullable=False)
     password = Column(String(120), nullable=False)
+    birthDate=Column(DateTime, nullable=True)
+    country=Column(String(50), nullable=False)
 
     def __repr__(self):
         return f"<User {self.email}>"
